@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         id="application"
+         point="org.eclipse.core.runtime.applications">
+      <application>
+         <run
+               class="com.exer.pro.Application">
+         </run>
+      </application>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            name="RCP Perspective"
+            class="com.exer.pro.Perspective"
+            id="com.exer.pro.perspective">
+      </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="com.exer.pro.ui.DiagramEditor"
+            contributorClass="com.exer.pro.actions.DiagramActionBarContributor"
+            default="false"
+            id="com.exer.pro.ui.DiagramEditor"
+            name="DiagramEditor">
+      </editor>
+   </extension>
+
+</plugin>
