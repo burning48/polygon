@@ -1,14 +1,29 @@
 package com.exer.pro.ui;
 
+import java.util.EventObject;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.DefaultEditDomain;
 import org.eclipse.gef.GraphicalViewer;
+import org.eclipse.gef.editparts.ScalableRootEditPart;
+import org.eclipse.gef.editparts.ZoomManager;
 import org.eclipse.gef.palette.*;
 import org.eclipse.gef.requests.SimpleFactory;
+import org.eclipse.gef.ui.actions.ZoomInAction;
+import org.eclipse.gef.ui.actions.ZoomOutAction;
 import org.eclipse.gef.ui.parts.GraphicalEditorWithPalette;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+
+
+
+
+
+
+
 
 
 
@@ -37,6 +52,13 @@ public class DiagramEditor extends GraphicalEditorWithPalette {
 	protected void configureGraphicalViewer(){
 		super.configureGraphicalViewer();
 		viewer = getGraphicalViewer();
+		ScalableRootEditPart rootEditPart = new ScalableRootEditPart();
+		viewer.setRootEditPart(rootEditPart);
+		ZoomManager manager = rootEditPart.getZoomManager();
+		IAction action = new ZoomInAction(manager);
+		getActionRegistry().registerAction(action);
+		action = new ZoomOutAction(manager);
+		getActionRegistry().registerAction(action);
 		viewer.setEditPartFactory(new partFactory());
 	}
 	
@@ -81,9 +103,20 @@ public class DiagramEditor extends GraphicalEditorWithPalette {
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		// TODO Auto-generated method stub
-
+		getCommandStack().markSaveLocation();
 	}
 
-
+	public Object getAdapter(Class type){
+		if(type == ZoomManager.class)
+			return ((ScalableRootEditPart)getGraphicalViewer().getRootEditPart()).getZoomManager();
+		return super.getAdapter(type);
+	}
+	public boolean isDirty(){
+		return getCommandStack().isDirty();
+	}
+	public void commandStackChanged(EventObject event){
+		firePropertyChange(IEditorPart.PROP_DIRTY);
+		super.commandStackChanged(event);
+	}
 
 }
